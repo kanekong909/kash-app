@@ -3,7 +3,7 @@
    Ajusta API_URL con la URL de tu backend en Railway
 ════════════════════════════════════════════════════ */
 
-const API_URL = 'https://TU-BACKEND.up.railway.app/api'; // ← cambia esto
+const API_URL = 'https://gastos-backend-production-fa36.up.railway.app/api'; // ← cambia esto
 
 // ── Estado global ─────────────────────────────────
 let token     = localStorage.getItem('gd_token') || null;
