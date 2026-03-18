@@ -3,7 +3,7 @@
    Ajusta API_URL con la URL de tu backend en Railway
 ════════════════════════════════════════════════════ */
 
-const API_URL = 'https://gastos-backend-production-fa36.up.railway.app/api'; // ← cambia esto
+const API_URL = 'https://TU-BACKEND.up.railway.app/api'; // ← cambia esto
 
 // ── Estado global ─────────────────────────────────
 let token     = localStorage.getItem('gd_token') || null;
@@ -111,15 +111,13 @@ document.getElementById('go-login').addEventListener('click', e => {
 });
 
 document.getElementById('btn-logout').addEventListener('click', logout);
-document.getElementById('btn-logout-mobile').addEventListener('click', logout);
 
 // ── Navegación ────────────────────────────────────
 function showSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.nav-link, .bottom-nav-item').forEach(l => l.classList.remove('active'));
   document.getElementById(`section-${name}`).classList.add('active');
   document.querySelectorAll(`[data-section="${name}"]`).forEach(l => l.classList.add('active'));
-  document.getElementById('mobile-menu').classList.add('hidden');
 
   if (name === 'resumen') cargarResumen();
   if (name === 'anteriores') cargarMeses();
@@ -127,15 +125,11 @@ function showSection(name) {
   if (name === 'graficos') initGraficos();
 }
 
-document.querySelectorAll('.nav-link').forEach(l => {
+document.querySelectorAll('.nav-link, .bottom-nav-item').forEach(l => {
   l.addEventListener('click', e => {
     e.preventDefault();
     showSection(l.dataset.section);
   });
-});
-
-document.getElementById('nav-hamburger').addEventListener('click', () => {
-  document.getElementById('mobile-menu').classList.toggle('hidden');
 });
 
 // ── Formulario nuevo gasto ─────────────────────────

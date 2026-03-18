@@ -84,18 +84,31 @@
       <span id="nav-nombre">Usuario</span>
       <button class="btn-logout" id="btn-logout">Salir</button>
     </div>
-    <button class="nav-hamburger" id="nav-hamburger">☰</button>
   </nav>
 
-  <!-- MOBILE MENU -->
-  <div class="mobile-menu hidden" id="mobile-menu">
-    <a href="#" class="nav-link active" data-section="nuevo">Nuevo gasto</a>
-    <a href="#" class="nav-link" data-section="resumen">Resumen</a>
-    <a href="#" class="nav-link" data-section="anteriores">Meses anteriores</a>
-    <a href="#" class="nav-link" data-section="reporte">Reporte</a>
-    <a href="#" class="nav-link" data-section="graficos">Gráficos</a>
-    <button class="btn-logout btn-full" id="btn-logout-mobile">Cerrar sesión</button>
-  </div>
+  <!-- BOTTOM NAV MOBILE -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <a href="#" class="bottom-nav-item active" data-section="nuevo">
+      <span class="bnav-icon">＋</span>
+      <span class="bnav-label">Nuevo</span>
+    </a>
+    <a href="#" class="bottom-nav-item" data-section="resumen">
+      <span class="bnav-icon">◑</span>
+      <span class="bnav-label">Resumen</span>
+    </a>
+    <a href="#" class="bottom-nav-item" data-section="anteriores">
+      <span class="bnav-icon">◷</span>
+      <span class="bnav-label">Historial</span>
+    </a>
+    <a href="#" class="bottom-nav-item" data-section="reporte">
+      <span class="bnav-icon">⬇</span>
+      <span class="bnav-label">Reporte</span>
+    </a>
+    <a href="#" class="bottom-nav-item" data-section="graficos">
+      <span class="bnav-icon">◈</span>
+      <span class="bnav-label">Gráficos</span>
+    </a>
+  </nav>
 
   <main class="container">
 
@@ -146,51 +159,7 @@
         </div>
       </div>
 
-      <!-- Edit Modal (hidden by default, shown inline) -->
-      <div id="edit-modal" class="modal-overlay hidden">
-        <div class="modal-card">
-          <div class="modal-header">
-            <h3>Editar gasto</h3>
-            <button class="btn-close" id="modal-close">✕</button>
-          </div>
-          <div class="form-grid">
-            <div class="field-group">
-              <label>Fecha</label>
-              <input type="date" id="e-fecha"/>
-            </div>
-            <div class="field-group">
-              <label>Hora</label>
-              <input type="time" id="e-hora"/>
-            </div>
-            <div class="field-group">
-              <label>Monto (COP)</label>
-              <div class="input-prefix">
-                <span>$</span>
-                <input type="number" id="e-monto" placeholder="0" min="0"/>
-              </div>
-            </div>
-            <div class="field-group">
-              <label>Categoría</label>
-              <select id="e-categoria">
-                <option value="Comida">Comida</option>
-                <option value="Transporte">Transporte</option>
-                <option value="Entretenimiento">Entretenimiento</option>
-                <option value="Ropa">Ropa</option>
-                <option value="Otros">Otros</option>
-              </select>
-            </div>
-            <div class="field-group full-width">
-              <label>Descripción</label>
-              <input type="text" id="e-descripcion"/>
-            </div>
-          </div>
-          <div id="edit-error" class="auth-error hidden"></div>
-          <div class="form-actions">
-            <button class="btn-primary" id="btn-update">Actualizar</button>
-            <button class="btn-ghost" id="btn-cancel-edit">Cancelar</button>
-          </div>
-        </div>
-      </div>
+      <!-- Edit Modal removed from here, now global -->
     </section>
 
     <!-- ── SECCIÓN 2: RESUMEN DEL MES ─────────────────── -->
@@ -336,6 +305,53 @@
     </section>
 
   </main>
+
+  <!-- MODAL EDITAR — global, fuera de cualquier sección -->
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Editar gasto</h3>
+        <button class="btn-close" id="modal-close">✕</button>
+      </div>
+      <div class="form-grid">
+        <div class="field-group">
+          <label>Fecha</label>
+          <input type="date" id="e-fecha"/>
+        </div>
+        <div class="field-group">
+          <label>Hora</label>
+          <input type="time" id="e-hora"/>
+        </div>
+        <div class="field-group">
+          <label>Monto (COP)</label>
+          <div class="input-prefix">
+            <span>$</span>
+            <input type="number" id="e-monto" placeholder="0" min="0"/>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Categoría</label>
+          <select id="e-categoria">
+            <option value="Comida">Comida</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Entretenimiento">Entretenimiento</option>
+            <option value="Ropa">Ropa</option>
+            <option value="Otros">Otros</option>
+          </select>
+        </div>
+        <div class="field-group full-width">
+          <label>Descripción</label>
+          <input type="text" id="e-descripcion"/>
+        </div>
+      </div>
+      <div id="edit-error" class="auth-error hidden"></div>
+      <div class="form-actions">
+        <button class="btn-primary" id="btn-update">Actualizar</button>
+        <button class="btn-ghost" id="btn-cancel-edit">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /app -->
 
 <script src="app.js"></script>
