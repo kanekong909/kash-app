@@ -10,6 +10,7 @@ let token     = localStorage.getItem('gd_token') || null;
 let usuario   = JSON.parse(localStorage.getItem('gd_usuario') || 'null');
 let editId    = null;
 let chartDonut = null, chartBar = null, chartLine = null;
+let deleteCallback = null;
 
 const MESES = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio',
                'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -194,6 +195,21 @@ document.getElementById('edit-modal').addEventListener('click', e => {
   if (e.target === document.getElementById('edit-modal'))
     document.getElementById('edit-modal').classList.add('hidden');
 });
+// Eliminar modal
+document.getElementById('btn-delete-cancel').addEventListener('click', () => {
+  document.getElementById('delete-modal').classList.add('hidden');
+  deleteCallback = null;
+});
+document.getElementById('btn-delete-confirm').addEventListener('click', async () => {
+  if (deleteCallback) await deleteCallback();
+  document.getElementById('delete-modal').classList.add('hidden');
+  deleteCallback = null;
+});
+
+function confirmDelete(cb) {
+  deleteCallback = cb;
+  document.getElementById('delete-modal').classList.remove('hidden');
+}
 
 document.getElementById('btn-update').addEventListener('click', async () => {
   const fecha  = document.getElementById('e-fecha').value;
@@ -283,9 +299,10 @@ async function cargarResumen() {
     tabla.innerHTML = '';
     if (!gastos.length) { tabla.appendChild(emptyState()); return; }
     gastos.forEach(g => tabla.appendChild(buildGastoItem(g, openEdit, async id => {
-      if (!confirm('¿Eliminar este gasto?')) return;
-      await api(`/gastos/${id}`, { method: 'DELETE' });
-      cargarResumen();
+      confirmDelete(async () => {
+        await api(`/gastos/${id}`, { method: 'DELETE' });
+        cargarResumen();
+      });
     })));
   } catch (e) {
     tabla.innerHTML = `<div class="empty-state"><p>Error: ${e.message}</p></div>`;
@@ -346,9 +363,10 @@ async function verDetalleMes(anio, mes) {
     tabla.innerHTML = '';
     if (!gastos.length) { tabla.appendChild(emptyState()); return; }
     gastos.forEach(g => tabla.appendChild(buildGastoItem(g, openEdit, async id => {
-      if (!confirm('¿Eliminar este gasto?')) return;
-      await api(`/gastos/${id}`, { method: 'DELETE' });
-      verDetalleMes(anio, mes);
+      confirmDelete(async () => {
+        await api(`/gastos/${id}`, { method: 'DELETE' });
+        verDetalleMes(anio, mes);
+      });
     })));
   } catch(e) {
     tabla.innerHTML = `<div class="empty-state"><p>${e.message}</p></div>`;
