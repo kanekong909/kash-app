@@ -777,7 +777,7 @@ function actualizarMesesGraf(periodos) {
       // Si hay mes seleccionado mostrar solo el día, si no mostrar dd/mm
       const key = mes
         ? g.fecha.slice(8,10)
-        : `${g.fecha.slice(8,10)}/${g.fecha.slice(5,7)}`;
+        : MESES[Number(g.fecha.slice(5,7))];
       byDay[key] = (byDay[key] || 0) + Number(g.monto);
     });
 
