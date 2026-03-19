@@ -226,15 +226,19 @@ function buildGastoItem(g, onEdit, onDel) {
   div.className = 'gasto-item';
   const desc = g.descripcion || g.categoria;
   div.innerHTML = `
-    <span class="cat-badge cat-${g.categoria}">${g.categoria}</span>
-    <div class="gasto-info">
-      <div class="gasto-desc">${desc}</div>
-      <div class="gasto-fecha">${fmtFecha(g.fecha.slice(0,10))} · ${(g.hora||'').slice(0,5)}</div>
+    <div class="gasto-item-top">
+      <span class="cat-badge cat-${g.categoria}">${g.categoria}</span>
+      <div class="gasto-info">
+        <div class="gasto-desc">${desc}</div>
+        <div class="gasto-fecha">${fmtFecha(g.fecha.slice(0,10))} · ${(g.hora||'').slice(0,5)}</div>
+      </div>
+      <div class="gasto-monto">${fmt(g.monto)}</div>
     </div>
-    <div class="gasto-monto">${fmt(g.monto)}</div>
-    <div class="gasto-actions">
-      <button class="btn-edit">Editar</button>
-      <button class="btn-del">Eliminar</button>
+    <div class="gasto-item-bottom">
+      <div class="gasto-actions">
+        <button class="btn-edit">Editar</button>
+        <button class="btn-del">Eliminar</button>
+      </div>
     </div>`;
   div.querySelector('.btn-edit').addEventListener('click', () => onEdit(g));
   div.querySelector('.btn-del').addEventListener('click',  () => onDel(g.id));
