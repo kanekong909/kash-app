@@ -32,7 +32,10 @@
       </div>
       <div class="field-group">
         <label>Contraseña</label>
-        <input type="password" id="login-pass" placeholder="••••••••"/>
+        <div class="input-pass">
+          <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"/>
+          <button type="button" class="btn-eye" data-target="reg-pass">👁</button>
+        </div>
       </div>
       <div id="login-error" class="auth-error hidden"></div>
       <button class="btn-primary btn-full" id="btn-login">Iniciar sesión</button>

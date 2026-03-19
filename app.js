@@ -572,6 +572,16 @@ function initApp() {
   showSection('nuevo');
 }
 
+// ── Toggle contraseña ─────────────────────────────
+document.querySelectorAll('.btn-eye').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const input = document.getElementById(btn.dataset.target);
+    const visible = input.type === 'text';
+    input.type = visible ? 'password' : 'text';
+    btn.textContent = visible ? '👁' : '🙈';
+  });
+});
+
 // ── Arrancar ──────────────────────────────────────
 if (token && usuario) {
   initApp();
