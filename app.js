@@ -1200,9 +1200,27 @@ function renderPendientes(pendientes) {
       </div>
       <div class="rp-monto">${fmt(r.monto)}</div>
       <button class="btn-rp-registrar">Registrar</button>`;
-    div.querySelector('.btn-rp-registrar').addEventListenr('click', () => abrirRegistrarRecurrente(r));
+    div.querySelector('.btn-rp-registrar').addEventListener('click', () => abrirRegistrarRecurrente(r));
     lista.appendChild(div);
   });
+}
+
+let recurrenteEditId = null;
+
+function abrirEditarRecurrente(r) {
+  recurrenteEditId = r.id;
+  document.getElementById('rec-nombre').value      = r.nombre;
+  document.getElementById('rec-monto').value       = r.monto;
+  document.getElementById('rec-dia').value         = r.dia_mes;
+  document.getElementById('rec-categoria').value   = r.categoria;
+  document.getElementById('rec-descripcion').value = r.descripcion || '';
+  document.getElementById('rec-billtera').value    = r.billtera_id || '';
+
+  const btn = document.getElementById('btn-crear-recurrente');
+  btn.textContent = 'Actualizar recurrente';
+  btn.dataset.modo = 'editar';
+
+  document.getElementById('rec-nombre').scrollIntoView({ behavior: 'smooth' });
 }
 
 function renderRecurrentesLista() {
