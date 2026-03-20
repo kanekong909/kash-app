@@ -42,7 +42,7 @@ router.put('/:id/recargar', async (req, res) => {
   const { id } = req.params;
   const { monto } = req.body;
   const uid = req.usuario.id;
-  if (!monto || Number(monto) <= 0)
+  if (!monto || monto === 0)
     return res.status(400).json({ error: 'Monto inválido' });
   try {
     const [existing] = await pool.query(

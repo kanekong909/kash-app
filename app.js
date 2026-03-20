@@ -1058,7 +1058,8 @@ document.getElementById('billtera-modal').addEventListener('click', e => {
 document.querySelectorAll('.btn-recarga').forEach(btn => {
   btn.addEventListener('click', async () => {
     if (!billteraActiva) return;
-    const monto = Number(btn.dataset.monto);
+    const raw = Number(btn.dataset.monto);
+    const monto = modoRecarga === 'restar' ? -raw : raw;
     try {
       const updated = await api(`/billeteras/${billteraActiva.id}/recargar`, {
         method: 'PUT',
@@ -1077,8 +1078,9 @@ document.querySelectorAll('.btn-recarga').forEach(btn => {
 // Recarga manual
 document.getElementById('btn-recarga-manual').addEventListener('click', async () => {
   if (!billteraActiva) return;
-  const monto = Number(document.getElementById('recarga-manual-input').value);
-  if (!monto || monto <= 0) return;
+  const raw = Number(document.getElementById('recarga-manual-input').value);
+  if (!raw || raw <= 0) return;
+  const monto = modoRecarga === 'restar' ? -raw : raw;
   try {
     const updated = await api(`/billeteras/${billteraActiva.id}/recargar`, {
       method: 'PUT',
