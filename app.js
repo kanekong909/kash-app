@@ -232,6 +232,15 @@ document.getElementById('pdf-pass').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('btn-pass-confirm').click();
 });
 
+// Modal detalle de registro
+document.getElementById('detail-modal-close').addEventListener('click', () => {
+  document.getElementById('detail-modal').classList.add('hidden');
+});
+document.getElementById('detail-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('detail-modal'))
+    document.getElementById('detail-modal').classList.add('hidden');
+});
+
 document.getElementById('btn-update').addEventListener('click', async () => {
   const fecha = document.getElementById('e-fecha').value;
   const hora = document.getElementById('e-hora').value;
@@ -257,10 +266,42 @@ document.getElementById('btn-update').addEventListener('click', async () => {
   }
 });
 
+// Funcion abrir detalle del gasto
+function openDetail(g) {
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-row">
+        <span class="detail-label">Categoría</span>
+        <span class="cat-badge cat-${g.categoria}">${g.categoria}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Descripción</span>
+        <span class="detail-value">${g.descripcion || '—'}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Monto</span>
+        <span class="detail-value detail-monto">${fmt(g.monto)}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Fecha</span>
+        <span class="detail-value">${fmtFecha(g.fecha.slice(0,10))}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Hora</span>
+        <span class="detail-value">${(g.hora||'').slice(0,5)}</span>
+      </div>
+    </div>`;
+  document.getElementById('detail-modal').classList.remove('hidden');
+}
+
 // ── Construir item de gasto ────────────────────────
 function buildGastoItem(g, onEdit, onDel) {
   const div = document.createElement('div');
   div.className = 'gasto-item';
+  div.style.cursor = 'pointer';
+  div.addEventListener('click', e => {
+    if (!e.target.closest('.gasto-actions')) openDetail(g);
+  });
   const desc = g.descripcion || g.categoria;
   div.innerHTML = `
       <div class="gasto-item-top">

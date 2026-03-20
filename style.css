@@ -566,6 +566,46 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
 }
 .anio-titulo:first-child { margin-top: 0; }
 
+/* DETALLE GASTO */
+/* ── DETALLE GASTO ────────────────────────────────── */
+.detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.detail-row:last-child { border-bottom: none; }
+
+.detail-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--text2);
+}
+
+.detail-value {
+  font-size: 14px;
+  color: var(--text);
+  text-align: right;
+  max-width: 60%;
+  word-break: break-word;
+}
+
+.detail-monto {
+  font-family: var(--font-head);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
 /* ── REPORTE ──────────────────────────────────────── */
 .reporte-card { max-width: 500px; }
 
