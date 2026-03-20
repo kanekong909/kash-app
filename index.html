@@ -146,6 +146,7 @@
               <input type="number" id="f-monto" placeholder="0" min="0" step="100"/>
             </div>
           </div>
+
           <div class="field-group">
             <label>Categoría</label>
             <select id="f-categoria">
@@ -157,10 +158,19 @@
               <option value="Otros">Otros</option>
             </select>
           </div>
+
+          <div class="field-group">
+            <label>¿Cómo pagaste? <span class="optional">(opcional)</span></label>
+            <select id="f-billtera">
+              <option value="">Sin especificar</option>
+            </select>
+          </div>
+
           <div class="field-group full-width">
             <label>Descripción <span class="optional">(opcional)</span></label>
             <input type="text" id="f-descripcion" placeholder="¿En qué gastaste?"/>
           </div>
+
         </div>
         <div id="form-error" class="auth-error hidden"></div>
         <div class="form-actions">
@@ -326,6 +336,12 @@
           </select>
         </div>
         <div class="field-group full-width">
+          <label>¿Cómo pagaste? <span class="optional">(opcional)</span></label>
+          <select id="e-billtera">
+            <option value="">Sin especificar</option>
+          </select>
+        </div>
+        <div class="field-group full-width">
           <label>Descripción</label>
           <input type="text" id="e-descripcion"/>
         </div>
@@ -383,6 +399,83 @@
         <button class="btn-close" id="detail-modal-close">✕</button>
       </div>
       <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <!-- BILLETERAS FLOTANTES -->
+  <div class="billeteras-fab" id="billeteras-fab">
+    <div id="billeteras-lista-fab"></div>
+    <button class="fab-add-btn" id="fab-add-billtera" title="Nueva billtera">＋</button>
+  </div>
+
+  <!-- MODAL BILLTERA DETALLE -->
+  <div id="billtera-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width:380px;">
+      <div class="modal-header">
+        <h3 id="billtera-modal-titulo">Billtera</h3>
+        <button class="btn-close" id="billtera-modal-close">✕</button>
+      </div>
+      <div class="billtera-saldo-display">
+        <span class="detail-label">Saldo disponible</span>
+        <span class="billtera-saldo-grande" id="billtera-saldo-display">$0</span>
+      </div>
+      <div class="billtera-recargas">
+        <p class="detail-label" style="margin-bottom:.6rem;">Recargar</p>
+        <div class="recarga-btns">
+          <button class="btn-recarga" data-monto="1000">+$1K</button>
+          <button class="btn-recarga" data-monto="2000">+$2K</button>
+          <button class="btn-recarga" data-monto="5000">+$5K</button>
+          <button class="btn-recarga" data-monto="10000">+$10K</button>
+          <button class="btn-recarga" data-monto="20000">+$20K</button>
+          <button class="btn-recarga" data-monto="50000">+$50K</button>
+        </div>
+        <div class="recarga-manual">
+          <div class="input-prefix">
+            <span>$</span>
+            <input type="number" id="recarga-manual-input" placeholder="Otro valor" min="0" step="1000"/>
+          </div>
+          <button class="btn-primary btn-sm" id="btn-recarga-manual">Agregar</button>
+        </div>
+      </div>
+      <div class="billtera-modal-actions">
+        <button class="btn-ghost btn-sm" id="btn-billtera-eliminar" style="color:var(--red); border-color:rgba(248,113,113,.3);">Eliminar billtera</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL NUEVA BILLTERA -->
+  <div id="nueva-billtera-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width:360px;">
+      <div class="modal-header">
+        <h3>Nueva billtera</h3>
+        <button class="btn-close" id="nueva-billtera-close">✕</button>
+      </div>
+      <div class="field-group">
+        <label>Emoji</label>
+        <div class="emoji-picker">
+          <button class="emoji-opt active" data-emoji="💳">💳</button>
+          <button class="emoji-opt" data-emoji="💵">💵</button>
+          <button class="emoji-opt" data-emoji="🏦">🏦</button>
+          <button class="emoji-opt" data-emoji="📱">📱</button>
+          <button class="emoji-opt" data-emoji="💰">💰</button>
+          <button class="emoji-opt" data-emoji="🪙">🪙</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Nombre</label>
+        <input type="text" id="nueva-billtera-nombre" placeholder="Ej: Nequi, Bancolombia, Efectivo…"/>
+      </div>
+      <div class="field-group">
+        <label>Saldo inicial</label>
+        <div class="input-prefix">
+          <span>$</span>
+          <input type="number" id="nueva-billtera-saldo" placeholder="0" min="0" step="1000"/>
+        </div>
+      </div>
+      <div id="nueva-billtera-error" class="auth-error hidden"></div>
+      <div class="form-actions">
+        <button class="btn-primary btn-full" id="btn-crear-billtera">Crear billtera</button>
+      </div>
     </div>
   </div>
 

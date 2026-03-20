@@ -154,13 +154,14 @@ document.getElementById('btn-guardar').addEventListener('click', async () => {
     document.getElementById('btn-guardar').innerHTML = '<span class="spinner"></span>';
     await api('/gastos', {
       method: 'POST',
-      body: JSON.stringify({ fecha, hora, monto: Number(monto), categoria: cat, descripcion: desc })
+      body: JSON.stringify({ fecha, hora, monto: Number(monto), categoria: cat, descripcion: desc, billtera_id: document.getElementById('f-billtera').value || null })
     });
     document.getElementById('btn-limpiar').click();
     // Mostrar confirmación
     const btn = document.getElementById('btn-guardar');
     btn.textContent = '✓ Guardado';
     btn.style.background = 'var(--green)';
+    cargarBilleteras();
     setTimeout(() => {
       btn.textContent = 'Guardar gasto';
       btn.style.background = '';
@@ -186,6 +187,16 @@ function openEdit(gasto) {
   document.getElementById('e-monto').value = gasto.monto;
   document.getElementById('e-categoria').value = gasto.categoria;
   document.getElementById('e-descripcion').value = gasto.descripcion || '';
+
+  // Actualizar opciones del select de billtera
+  const eSel = document.getElementById('e-billtera');
+  eSel.innerHTML = '<option value="">Sin especificar</option>';
+  billeteras.forEach(b => {
+    const o = new Option(`${b.emoji} ${b.nombre} — ${fmt(b.saldo)}`, b.id);
+    eSel.appendChild(o);
+  });
+  if (gasto.billtera_id) eSel.value = gasto.billtera_id;
+
   document.getElementById('edit-modal').classList.remove('hidden');
 }
 
@@ -271,10 +282,11 @@ document.getElementById('btn-update').addEventListener('click', async () => {
     document.getElementById('btn-update').textContent = 'Guardando…';
     await api(`/gastos/${editId}`, {
       method: 'PUT',
-      body: JSON.stringify({ fecha, hora, monto: Number(monto), categoria: cat, descripcion: desc })
+      body: JSON.stringify({ fecha, hora, monto: Number(monto), categoria: cat, descripcion: desc, billtera_id: document.getElementById('e-billtera') ? document.getElementById('e-billtera').value || null : null })
     });
     document.getElementById('edit-modal').classList.add('hidden');
     cargarResumen();
+    cargarBilleteras();
   } catch (e) {
     showError('edit-error', e.message);
   } finally {
@@ -940,6 +952,8 @@ function initApp() {
   document.getElementById('nav-nombre').textContent = usuario.nombre.split(' ')[0];
   setDefaultDateTime();
   showSection('nuevo');
+
+  cargarBilleteras();
 }
 
 // ── Toggle contraseña ─────────────────────────────
@@ -950,6 +964,162 @@ document.querySelectorAll('.btn-eye').forEach(btn => {
     input.type = visible ? 'password' : 'text';
     btn.textContent = visible ? '👁' : '🙈';
   });
+});
+
+// ── BILLETERAS ────────────────────────────────────
+let billeteras = [];
+let billteraActiva = null;
+let emojiSeleccionado = '💳';
+
+async function cargarBilleteras() {
+  try {
+    billeteras = await api('/billeteras');
+    renderFabBilleteras();
+    actualizarSelectBilltera();
+  } catch(e) { console.error(e); }
+}
+
+function renderFabBilleteras() {
+  const lista = document.getElementById('billeteras-lista-fab');
+  lista.innerHTML = '';
+  billeteras.forEach(b => {
+    const btn = document.createElement('button');
+    btn.className = 'fab-billtera';
+    btn.innerHTML = `
+      <span class="fab-billtera-emoji">${b.emoji}</span>
+      <div class="fab-billtera-info">
+        <span class="fab-billtera-nombre">${b.nombre}</span>
+        <span class="fab-billtera-saldo ${Number(b.saldo) < 0 ? 'negativo' : ''}">${fmt(b.saldo)}</span>
+      </div>`;
+    btn.addEventListener('click', () => abrirBillteraModal(b));
+    lista.appendChild(btn);
+  });
+}
+
+function actualizarSelectBilltera() {
+  const sel = document.getElementById('f-billtera');
+  const val = sel.value;
+  sel.innerHTML = '<option value="">Sin especificar</option>';
+  billeteras.forEach(b => {
+    const o = new Option(`${b.emoji} ${b.nombre} — ${fmt(b.saldo)}`, b.id);
+    sel.appendChild(o);
+  });
+  if (val) sel.value = val;
+}
+
+function abrirBillteraModal(b) {
+  billteraActiva = b;
+  document.getElementById('billtera-modal-titulo').textContent = `${b.emoji} ${b.nombre}`;
+  const saldoEl = document.getElementById('billtera-saldo-display');
+  saldoEl.textContent = fmt(b.saldo);
+  saldoEl.className = 'billtera-saldo-grande' + (Number(b.saldo) < 0 ? ' negativo' : '');
+  document.getElementById('recarga-manual-input').value = '';
+  document.getElementById('billtera-modal').classList.remove('hidden');
+}
+
+document.getElementById('billtera-modal-close').addEventListener('click', () => {
+  document.getElementById('billtera-modal').classList.add('hidden');
+});
+document.getElementById('billtera-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('billtera-modal'))
+    document.getElementById('billtera-modal').classList.add('hidden');
+});
+
+// Botones de recarga rápida
+document.querySelectorAll('.btn-recarga').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    if (!billteraActiva) return;
+    const monto = Number(btn.dataset.monto);
+    try {
+      const updated = await api(`/billeteras/${billteraActiva.id}/recargar`, {
+        method: 'PUT',
+        body: JSON.stringify({ monto })
+      });
+      billteraActiva = updated;
+      const idx = billeteras.findIndex(b => b.id === updated.id);
+      if (idx !== -1) billeteras[idx] = updated;
+      abrirBillteraModal(updated);
+      renderFabBilleteras();
+      actualizarSelectBilltera();
+    } catch(e) { alert('Error: ' + e.message); }
+  });
+});
+
+// Recarga manual
+document.getElementById('btn-recarga-manual').addEventListener('click', async () => {
+  if (!billteraActiva) return;
+  const monto = Number(document.getElementById('recarga-manual-input').value);
+  if (!monto || monto <= 0) return;
+  try {
+    const updated = await api(`/billeteras/${billteraActiva.id}/recargar`, {
+      method: 'PUT',
+      body: JSON.stringify({ monto })
+    });
+    billteraActiva = updated;
+    const idx = billeteras.findIndex(b => b.id === updated.id);
+    if (idx !== -1) billeteras[idx] = updated;
+    abrirBillteraModal(updated);
+    renderFabBilleteras();
+    actualizarSelectBilltera();
+  } catch(e) { alert('Error: ' + e.message); }
+});
+
+// Eliminar billtera
+document.getElementById('btn-billtera-eliminar').addEventListener('click', () => {
+  if (!billteraActiva) return;
+  document.getElementById('billtera-modal').classList.add('hidden');
+  confirmDelete(async () => {
+    try {
+      await api(`/billeteras/${billteraActiva.id}`, { method: 'DELETE' });
+      billeteras = billeteras.filter(b => b.id !== billteraActiva.id);
+      renderFabBilleteras();
+      actualizarSelectBilltera();
+    } catch(e) { alert('Error: ' + e.message); }
+  });
+});
+
+// Modal nueva billtera
+document.getElementById('fab-add-billtera').addEventListener('click', () => {
+  document.getElementById('nueva-billtera-nombre').value = '';
+  document.getElementById('nueva-billtera-saldo').value = '';
+  document.querySelectorAll('.emoji-opt').forEach(e => e.classList.remove('active'));
+  document.querySelector('.emoji-opt[data-emoji="💳"]').classList.add('active');
+  emojiSeleccionado = '💳';
+  document.getElementById('nueva-billtera-modal').classList.remove('hidden');
+});
+document.getElementById('nueva-billtera-close').addEventListener('click', () => {
+  document.getElementById('nueva-billtera-modal').classList.add('hidden');
+});
+document.querySelectorAll('.emoji-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.emoji-opt').forEach(e => e.classList.remove('active'));
+    btn.classList.add('active');
+    emojiSeleccionado = btn.dataset.emoji;
+  });
+});
+
+document.getElementById('btn-crear-billtera').addEventListener('click', async () => {
+  const nombre = document.getElementById('nueva-billtera-nombre').value.trim();
+  const saldo  = document.getElementById('nueva-billtera-saldo').value;
+  if (!nombre) {
+    showError('nueva-billtera-error', 'El nombre es requerido');
+    return;
+  }
+  try {
+    document.getElementById('btn-crear-billtera').textContent = 'Creando…';
+    const nueva = await api('/billeteras', {
+      method: 'POST',
+      body: JSON.stringify({ nombre, saldo: Number(saldo) || 0, emoji: emojiSeleccionado })
+    });
+    billeteras.push(nueva);
+    document.getElementById('nueva-billtera-modal').classList.add('hidden');
+    renderFabBilleteras();
+    actualizarSelectBilltera();
+  } catch(e) {
+    showError('nueva-billtera-error', e.message);
+  } finally {
+    document.getElementById('btn-crear-billtera').textContent = 'Crear billtera';
+  }
 });
 
 // ── Arrancar ──────────────────────────────────────
