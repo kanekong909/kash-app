@@ -296,6 +296,7 @@ document.getElementById('btn-update').addEventListener('click', async () => {
 
 // Funcion abrir detalle del gasto
 function openDetail(g) {
+  const billtera = billeteras.find(b => b.id === g.billtera_id);
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-grid">
       <div class="detail-row">
@@ -309,6 +310,10 @@ function openDetail(g) {
       <div class="detail-row">
         <span class="detail-label">Monto</span>
         <span class="detail-value detail-monto">${fmt(g.monto)}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Pagado con</span>
+        <span class="detail-value">${billtera ? `${billtera.emoji} ${billtera.nombre}` : '—'}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label">Fecha</span>
@@ -331,6 +336,7 @@ function buildGastoItem(g, onEdit, onDel) {
     if (!e.target.closest('.gasto-actions')) openDetail(g);
   });
   const desc = g.descripcion || g.categoria;
+  const billtera = billeteras.find(b => b.id === g.billtera_id);
   div.innerHTML = `
       <div class="gasto-item-top">
         <span class="cat-badge cat-${g.categoria}">${g.categoria}</span>
@@ -341,6 +347,7 @@ function buildGastoItem(g, onEdit, onDel) {
         <div class="gasto-monto">${fmt(g.monto)}</div>
       </div>
       <div class="gasto-item-bottom">
+        <span class="gasto-billtera">${billtera ? `${billtera.emoji} ${billtera.nombre}` : ''}</span>
         <div class="gasto-actions">
           <button class="btn-edit">Editar</button>
           <button class="btn-del">Eliminar</button>

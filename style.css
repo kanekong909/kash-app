@@ -735,6 +735,12 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   z-index: 90;
 }
 
+.gasto-billtera {
+  font-size: 12px;
+  color: var(--text3);
+  font-weight: 500;
+}
+
 .fab-billtera {
   display: flex;
   align-items: center;
