@@ -217,8 +217,9 @@ document.getElementById('btn-delete-confirm').addEventListener('click', async ()
   deleteCallback = null;
 });
 
-function confirmDelete(cb) {
+function confirmDelete(cb, titulo = '¿Eliminar gasto?') {
   deleteCallback = cb;
+  document.getElementById('delete-modal-titulo').textContent = titulo;
   document.getElementById('delete-modal').classList.remove('hidden');
 }
 
@@ -1082,7 +1083,7 @@ document.getElementById('btn-billtera-eliminar').addEventListener('click', () =>
       renderFabBilleteras();
       actualizarSelectBilltera();
     } catch(e) { alert('Error: ' + e.message); }
-  });
+  }, `¿Eliminar ${billteraActiva.nombre}?`);
 });
 
 // Modal nueva billtera
