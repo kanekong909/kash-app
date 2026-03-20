@@ -118,26 +118,28 @@ router.post('/', async (req, res) => {
   try {
     await conn.beginTransaction();
 
-    const [result] = await conn.query(
-      'INSERT INTO gastos (usuario_id, fecha, hora, monto, categoria, descripcion, billtera_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [uid, fecha, hora, Number(monto), categoria, descripcion || null, billtera_id || null]
-    );
-
-    // Descontar saldo de la billtera si se especificó
+    // Obtener nombre de la billtera si se especificó
+    let metodo_pago = null;
     if (billtera_id) {
       const [bil] = await conn.query(
-        'SELECT saldo FROM billeteras WHERE id = ? AND usuario_id = ?',
+        'SELECT nombre, emoji FROM billeteras WHERE id = ? AND usuario_id = ?',
         [billtera_id, uid]
       );
       if (!bil.length) {
         await conn.rollback();
         return res.status(404).json({ error: 'Billtera no encontrada' });
       }
+      metodo_pago = `${bil[0].emoji} ${bil[0].nombre}`;
       await conn.query(
         'UPDATE billeteras SET saldo = saldo - ? WHERE id = ?',
         [Number(monto), billtera_id]
       );
     }
+
+    const [result] = await conn.query(
+      'INSERT INTO gastos (usuario_id, fecha, hora, monto, categoria, descripcion, billtera_id, metodo_pago) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [uid, fecha, hora, Number(monto), categoria, descripcion || null, billtera_id || null, metodo_pago]
+    );
 
     await conn.commit();
     const [rows] = await pool.query('SELECT * FROM gastos WHERE id = ?', [result.insertId]);
@@ -179,8 +181,16 @@ router.put('/:id', async (req, res) => {
       );
     }
 
-    // Aplicar nuevo descuento si tiene billtera
+    // Obtener nombre de la nueva billtera si se especificó
+    let metodo_pago = null;
     if (billtera_id) {
+      const [bil] = await conn.query(
+        'SELECT nombre, emoji FROM billeteras WHERE id = ? AND usuario_id = ?',
+        [billtera_id, uid]
+      );
+      if (bil.length) {
+        metodo_pago = `${bil[0].emoji} ${bil[0].nombre}`;
+      }
       await conn.query(
         'UPDATE billeteras SET saldo = saldo - ? WHERE id = ? AND usuario_id = ?',
         [Number(monto), billtera_id, uid]
@@ -188,8 +198,8 @@ router.put('/:id', async (req, res) => {
     }
 
     await conn.query(
-      'UPDATE gastos SET fecha=?, hora=?, monto=?, categoria=?, descripcion=?, billtera_id=? WHERE id=?',
-      [fecha, hora, Number(monto), categoria, descripcion || null, billtera_id || null, id]
+      'UPDATE gastos SET fecha=?, hora=?, monto=?, categoria=?, descripcion=?, billtera_id=?, metodo_pago=? WHERE id=?',
+      [fecha, hora, Number(monto), categoria, descripcion || null, billtera_id || null, metodo_pago, id]
     );
 
     await conn.commit();

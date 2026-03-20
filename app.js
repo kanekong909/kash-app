@@ -313,7 +313,7 @@ function openDetail(g) {
       </div>
       <div class="detail-row">
         <span class="detail-label">Pagado con</span>
-        <span class="detail-value">${billtera ? `${billtera.emoji} ${billtera.nombre}` : '—'}</span>
+        <span class="detail-value">${g.metodo_pago || '—'}</span>
       </div>
       <div class="detail-row">
         <span class="detail-label">Fecha</span>
@@ -347,7 +347,7 @@ function buildGastoItem(g, onEdit, onDel) {
         <div class="gasto-monto">${fmt(g.monto)}</div>
       </div>
       <div class="gasto-item-bottom">
-        <span class="gasto-billtera">${billtera ? `${billtera.emoji} ${billtera.nombre}` : ''}</span>
+        <span class="gasto-billtera">${g.metodo_pago || ''}</span>
         <div class="gasto-actions">
           <button class="btn-edit">Editar</button>
           <button class="btn-del">Eliminar</button>
