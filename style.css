@@ -734,13 +734,11 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   gap: .5rem;
   z-index: 90;
 }
-
 .gasto-billtera {
   font-size: 12px;
   color: var(--text3);
   font-weight: 500;
 }
-
 .fab-billtera {
   display: flex;
   align-items: center;
@@ -748,28 +746,33 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: 40px;
-  padding: .5rem .9rem .5rem .6rem;
+  padding: .5rem .6rem;
   cursor: pointer;
   transition: all var(--transition);
   box-shadow: var(--shadow);
-  white-space: nowrap;
-  max-width: 48px;
+  width: 44px;
   overflow: hidden;
 }
 .fab-billtera:hover {
-  max-width: 220px;
+  width: 180px;
   border-color: var(--accent);
   background: var(--bg3);
+  padding: .5rem .9rem .5rem .6rem;
 }
 .fab-billtera-emoji { font-size: 1.2rem; flex-shrink: 0; }
 .fab-billtera-info {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  width: 0;
   opacity: 0;
-  transition: opacity var(--transition);
-  min-width: 0;
+  transition: width var(--transition), opacity var(--transition);
+  white-space: nowrap;
 }
-.fab-billtera:hover .fab-billtera-info { opacity: 1; }
+.fab-billtera:hover .fab-billtera-info {
+  width: 120px;
+  opacity: 1;
+}
 .fab-billtera-nombre {
   font-size: 11px;
   font-weight: 600;
@@ -786,7 +789,6 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   white-space: nowrap;
 }
 .fab-billtera-saldo.negativo { color: var(--red); }
-
 .fab-add-btn {
   width: 44px; height: 44px;
   border-radius: 50%;
@@ -804,7 +806,6 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   background: var(--accent2);
   transform: scale(1.08);
 }
-
 /* ── BILLTERA MODAL ───────────────────────────────── */
 .billtera-saldo-display {
   background: var(--bg3);
@@ -823,9 +824,7 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   color: var(--accent);
 }
 .billtera-saldo-grande.negativo { color: var(--red); }
-
 .billtera-recargas { margin-bottom: 1.25rem; }
-
 .recarga-btns {
   display: flex;
   flex-wrap: wrap;
@@ -847,21 +846,18 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   background: rgba(62,207,142,.1);
   border-color: rgba(62,207,142,.3);
 }
-
 .recarga-manual {
   display: flex;
   gap: .5rem;
   align-items: center;
 }
 .recarga-manual .input-prefix { flex: 1; }
-
 .billtera-modal-actions {
   border-top: 1px solid var(--border);
   padding-top: 1rem;
   display: flex;
   justify-content: flex-end;
 }
-
 /* ── EMOJI PICKER ─────────────────────────────────── */
 .emoji-picker {
   display: flex;
@@ -880,17 +876,14 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
 }
 .emoji-opt:hover { border-color: var(--border2); }
 .emoji-opt.active { border-color: var(--accent); background: var(--accent-dim); }
-
 @media (max-width: 768px) {
   .nav-links { display: none; }
   .nav-user { display: flex; }
   .bottom-nav { display: flex; }
-
   .container {
     padding: 1.5rem 1rem;
     padding-bottom: calc(70px + 1rem);
   }
-
   .form-grid { grid-template-columns: 1fr; }
   .field-group.full-width { grid-column: 1; }
   .section-header h1 { font-size: 1.5rem; }
@@ -899,7 +892,6 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   .resumen-total-badge { min-width: auto; text-align: left; }
   .form-actions { flex-direction: column; }
   .btn-ghost, .btn-primary { width: 100%; justify-content: center; }
-
   .billeteras-fab {
     top: auto;
     bottom: calc(70px + 1rem);
