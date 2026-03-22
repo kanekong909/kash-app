@@ -973,15 +973,37 @@ footer {
   }
 
   /* Hero */
-  .hero {
+   .hero {
     padding: 6rem 1.25rem 3rem;
+    min-height: auto;
+  }
+  .hero-title {
+    font-size: 1.9rem;
+    letter-spacing: -.01em;
+  }
+  .hero-sub {
+    font-size: 1rem;
+  }
+  .hero-badge {
+    font-size: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  .btn-hero {
+    width: 100%;
+    justify-content: center;
   }
   .hero-stats {
-    gap: 1rem;
-    padding-top: 2rem;
-    margin-top: 2.5rem;
+    gap: 1rem 1.5rem;
+    padding-top: 1.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .stat-num { font-size: 1.5rem; }
+  .stat-num { font-size: 1.4rem; }
   .stat-label { font-size: 11px; }
 
   /* Mockup */
