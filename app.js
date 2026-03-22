@@ -1059,6 +1059,7 @@ function initApp() {
   showSection('nuevo');
 
   cargarBilleteras();
+  renderNavAvatar();
 }
 
 // ── Toggle contraseña ─────────────────────────────
@@ -1520,8 +1521,8 @@ document.getElementById('btn-theme').addEventListener('click', () => {
 
 // ── PERFIL ────────────────────────────────────────
 function abrirPerfilModal() {
-  document.getElementById('perfil-nombre').value     = usuario.nombre;
-  document.getElementById('perfil-email').value      = usuario.email;
+  document.getElementById('perfil-nombre').value      = usuario.nombre;
+  document.getElementById('perfil-email').value       = usuario.email;
   document.getElementById('perfil-pass-actual').value = '';
   document.getElementById('perfil-pass-nueva').value  = '';
   document.getElementById('perfil-info-nombre').textContent = usuario.nombre;
@@ -1533,8 +1534,74 @@ function abrirPerfilModal() {
   document.getElementById('perfil-pass-actual').type = 'password';
   document.getElementById('perfil-pass-nueva').type  = 'password';
 
+  // Cargar avatar actual
+  const avatarImg   = document.getElementById('perfil-avatar-img');
+  const avatarEmoji = document.getElementById('perfil-avatar-emoji');
+  if (usuario.avatar) {
+    avatarImg.src = usuario.avatar;
+    avatarImg.style.display   = 'block';
+    avatarEmoji.style.display = 'none';
+  } else {
+    avatarImg.style.display   = 'none';
+    avatarEmoji.style.display = 'block';
+  }
+
+  // Limpiar selección previa de imagen
+  document.getElementById('perfil-avatar-input').value      = '';
+  document.getElementById('perfil-avatar-input').dataset.base64 = '';
+
   document.getElementById('perfil-modal').classList.remove('hidden');
 }
+
+// Click en el círculo abre el file input
+document.getElementById('perfil-avatar-circle').addEventListener('click', () => {
+  document.getElementById('perfil-avatar-input').click();
+});
+
+// Al seleccionar imagen
+document.getElementById('perfil-avatar-input').addEventListener('change', function() {
+  const file = this.files[0];
+  if (!file) return;
+
+  // Validar tamaño máximo 2MB
+  if (file.size > 2 * 1024 * 1024) {
+    showError('perfil-error', 'La imagen no puede superar 2MB');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const base64 = e.target.result;
+
+    // Redimensionar antes de guardar
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const size = 200; // px cuadrado
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      // Recortar al centro (crop cuadrado)
+      const min = Math.min(img.width, img.height);
+      const sx = (img.width - min) / 2;
+      const sy = (img.height - min) / 2;
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+
+      const resized = canvas.toDataURL('image/jpeg', 0.8);
+
+      // Mostrar preview
+      const avatarImg = document.getElementById('perfil-avatar-img');
+      avatarImg.src = resized;
+      avatarImg.style.display = 'block';
+      document.getElementById('perfil-avatar-emoji').style.display = 'none';
+
+      // Guardar temporalmente en el input
+      document.getElementById('perfil-avatar-input').dataset.base64 = resized;
+    };
+    img.src = base64;
+  };
+  reader.readAsDataURL(file);
+});
 
 document.getElementById('nav-nombre').addEventListener('click', abrirPerfilModal);
 
@@ -1550,15 +1617,14 @@ document.getElementById('perfil-modal').addEventListener('click', e => {
 });
 
 document.getElementById('btn-perfil-guardar').addEventListener('click', async () => {
-  const nombre         = document.getElementById('perfil-nombre').value.trim();
-  const email          = document.getElementById('perfil-email').value.trim();
-  const passActual     = document.getElementById('perfil-pass-actual').value;
-  const passNueva      = document.getElementById('perfil-pass-nueva').value;
+  const nombre     = document.getElementById('perfil-nombre').value.trim();
+  const email      = document.getElementById('perfil-email').value.trim();
+  const passActual = document.getElementById('perfil-pass-actual').value;
+  const passNueva  = document.getElementById('perfil-pass-nueva').value;
 
   if (!nombre || !email)
     return showError('perfil-error', 'El nombre y el correo son obligatorios');
 
-  // Si llena solo uno de los dos campos de contraseña
   if (passNueva && !passActual)
     return showError('perfil-error', 'Debes ingresar tu contraseña actual para cambiarla');
   if (passActual && !passNueva)
@@ -1568,23 +1634,34 @@ document.getElementById('btn-perfil-guardar').addEventListener('click', async ()
     const btn = document.getElementById('btn-perfil-guardar');
     btn.textContent = 'Guardando…';
 
+    const avatarBase64 = document.getElementById('perfil-avatar-input').dataset.base64 || undefined;
+
     const body = { nombre, email };
     if (passNueva) {
       body.password_actual = passActual;
       body.password_nueva  = passNueva;
     }
+    if (avatarBase64) body.avatar = avatarBase64;
 
     const res = await api('/auth/perfil', { method: 'PUT', body: JSON.stringify(body) });
 
     // Actualizar sesión local
     usuario.nombre = res.usuario.nombre;
     usuario.email  = res.usuario.email;
+    if (res.usuario.avatar) usuario.avatar = res.usuario.avatar;
     localStorage.setItem('gd_usuario', JSON.stringify(usuario));
-    document.getElementById('nav-nombre').textContent = usuario.nombre.split(' ')[0];
 
-    // Limpiar contraseñas y mostrar éxito
+    // Actualizar navbar
+    document.getElementById('nav-nombre').textContent = usuario.nombre.split(' ')[0];
+    renderNavAvatar();
+
+    // Limpiar contraseñas y archivo
     document.getElementById('perfil-pass-actual').value = '';
     document.getElementById('perfil-pass-nueva').value  = '';
+    document.getElementById('perfil-avatar-input').value = '';
+    document.getElementById('perfil-avatar-input').dataset.base64 = '';
+
+    // Actualizar info visible
     document.getElementById('perfil-info-nombre').textContent = usuario.nombre;
     document.getElementById('perfil-info-email').textContent  = usuario.email;
     document.getElementById('perfil-error').classList.add('hidden');
@@ -1594,7 +1671,7 @@ document.getElementById('btn-perfil-guardar').addEventListener('click', async ()
   } catch (e) {
     showError('perfil-error', e.message);
   } finally {
-    document.getElementById('btn-perfil-guardar').textContent = 'Guardar cambios';
+    document.getElementById('btn-perfil-guardar').textContent = 'Guardar';
   }
 });
 

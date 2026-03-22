@@ -27,7 +27,10 @@ router.post('/register', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
-    res.status(201).json({ token, usuario: { id: result.insertId, nombre: nombre.trim(), email } });
+    res.status(201).json({
+      token,
+      usuario: { id: result.insertId, nombre: nombre.trim(), email, avatar: null }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error del servidor' });
@@ -57,14 +60,22 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
-    res.json({ token, usuario: { id: usuario.id, nombre: usuario.nombre, email: usuario.email } });
+    res.json({
+      token,
+      usuario: {
+        id: usuario.id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        avatar: usuario.avatar || null
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error del servidor' });
   }
 });
 
-// PUT /api/auth/perfil — actualizar nombre, email y/o contraseña
+// ── PUT /api/auth/perfil ───────────────────────────────────
 router.put('/perfil', async (req, res) => {
   // Verificar token manualmente
   const authHeader = req.headers['authorization'];
@@ -78,7 +89,7 @@ router.put('/perfil', async (req, res) => {
   }
 
   const userId = payload.id;
-  const { nombre, email, password_actual, password_nueva } = req.body;
+  const { nombre, email, password_actual, password_nueva, avatar } = req.body;
 
   try {
     const [rows] = await pool.query('SELECT * FROM usuarios WHERE id = ?', [userId]);
@@ -88,6 +99,7 @@ router.put('/perfil', async (req, res) => {
     let nuevoNombre = nombre?.trim() || user.nombre;
     let nuevoEmail  = email?.trim()  || user.email;
     let nuevoHash   = user.password;
+    let nuevoAvatar = avatar !== undefined ? avatar : user.avatar;
 
     // Cambiar contraseña
     if (password_nueva) {
@@ -100,16 +112,21 @@ router.put('/perfil', async (req, res) => {
 
     // Verificar email único
     if (nuevoEmail !== user.email) {
-      const [existe] = await pool.query('SELECT id FROM usuarios WHERE email = ? AND id != ?', [nuevoEmail, userId]);
+      const [existe] = await pool.query(
+        'SELECT id FROM usuarios WHERE email = ? AND id != ?', [nuevoEmail, userId]
+      );
       if (existe.length) return res.status(400).json({ error: 'Ese correo ya está registrado' });
     }
 
     await pool.query(
-      'UPDATE usuarios SET nombre = ?, email = ?, password = ?, updated_at = NOW() WHERE id = ?',
-      [nuevoNombre, nuevoEmail, nuevoHash, userId]
+      'UPDATE usuarios SET nombre = ?, email = ?, password = ?, avatar = ?, updated_at = NOW() WHERE id = ?',
+      [nuevoNombre, nuevoEmail, nuevoHash, nuevoAvatar, userId]
     );
 
-    res.json({ mensaje: 'Perfil actualizado', usuario: { id: userId, nombre: nuevoNombre, email: nuevoEmail } });
+    res.json({
+      mensaje: 'Perfil actualizado',
+      usuario: { id: userId, nombre: nuevoNombre, email: nuevoEmail, avatar: nuevoAvatar }
+    });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
