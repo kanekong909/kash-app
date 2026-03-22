@@ -79,9 +79,9 @@
 
   <!-- NAVBAR -->
   <nav class="navbar">
-    <div class="nav-brand">
+    <div class="nav-brand" style="cursor:pointer;" onclick="window.location.href='landing.html'">
       <span class="logo-icon">◈</span>
-      <span class="logo-text">GASTOS</span>
+      <span class="logo-text">KASH</span>
     </div>
     <div class="nav-links">
       <a href="#" class="nav-link active" data-section="nuevo">Nuevo gasto</a>
@@ -618,5 +618,11 @@
 </div><!-- /app -->
 
 <script src="app.js"></script>
+<script>
+  if (window.location.hash === '#register') {
+    document.getElementById('panel-login').classList.remove('active');
+    document.getElementById('panel-register').classList.add('active');
+  }
+</script>
 </body>
 </html>
