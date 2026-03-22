@@ -56,6 +56,20 @@ function logout() {
   token = null; usuario = null;
   localStorage.removeItem('gd_token');
   localStorage.removeItem('gd_usuario');
+
+  // Limpiar campos de login y registro
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('reg-nombre').value = '';
+  document.getElementById('reg-email').value = '';
+  document.getElementById('reg-pass').value = '';
+
+  // Resetear ojos de contraseña
+  document.getElementById('login-pass').type = 'password';
+  document.getElementById('reg-pass').type = 'password';
+  document.querySelectorAll('.btn-eye').forEach(btn => btn.textContent = '👁');
+
+  // Mostrar login
   document.getElementById('app').classList.add('hidden');
   document.getElementById('auth-overlay').classList.remove('hidden');
   document.getElementById('panel-login').classList.add('active');
