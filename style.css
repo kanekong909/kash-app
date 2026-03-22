@@ -1105,3 +1105,118 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   transition: all var(--transition);
 }
 .btn-rec-eliminar:hover { background: rgba(248,113,113,.2); }
+
+/* ── TEMA CLARO ───────────────────────────────────── */
+[data-theme="light"] {
+  --bg:         #fdf6ee;
+  --bg2:        #fef9f3;
+  --bg3:        #f5ebe0;
+  --bg4:        #ecddd0;
+  --border:     #e0cfc0;
+  --border2:    #d4bfaa;
+  --text:       #2d1f0e;
+  --text2:      #7a5c42;
+  --text3:      #b89880;
+  --accent:     #e07b20;
+  --accent2:    #c96a10;
+  --accent-dim: rgba(224,123,32,.12);
+  --green:      #2d9e6b;
+  --red:        #d94f3d;
+  --blue:       #3d7fd4;
+  --shadow:     0 4px 24px rgba(100,60,20,.1);
+  --shadow-lg:  0 12px 48px rgba(100,60,20,.15);
+}
+
+[data-theme="light"] .navbar {
+  background: rgba(253,246,238,.95);
+}
+
+[data-theme="light"] .bottom-nav {
+  background: rgba(254,249,243,.97);
+}
+
+[data-theme="light"] .modal-overlay {
+  background: rgba(80,40,10,.35);
+}
+
+[data-theme="light"] .auth-overlay {
+  background: var(--bg);
+}
+
+[data-theme="light"] select option {
+  background: var(--bg3);
+  color: var(--text);
+}
+
+[data-theme="light"] .fab-billtera {
+  box-shadow: 0 4px 16px rgba(100,60,20,.12);
+}
+
+[data-theme="light"] .fab-add-btn {
+  box-shadow: 0 4px 16px rgba(224,123,32,.3);
+}
+
+[data-theme="light"] .mes-card:hover {
+  box-shadow: 0 8px 24px rgba(100,60,20,.15);
+}
+
+[data-theme="light"] .cat-Comida          { background: rgba(45,158,107,.15); color: #2d9e6b; }
+[data-theme="light"] .cat-Transporte      { background: rgba(61,127,212,.15); color: #3d7fd4; }
+[data-theme="light"] .cat-Entretenimiento { background: rgba(130,90,200,.15); color: #825ac8; }
+[data-theme="light"] .cat-Ropa            { background: rgba(200,100,40,.15); color: #c86428; }
+[data-theme="light"] .cat-Otros          { background: rgba(120,100,80,.15);  color: #786450; }
+
+[data-theme="light"] .btn-edit {
+  background: rgba(61,127,212,.1);
+  color: #3d7fd4;
+  border-color: rgba(61,127,212,.25);
+}
+[data-theme="light"] .btn-edit:hover { background: rgba(61,127,212,.18); }
+
+[data-theme="light"] .btn-del {
+  background: rgba(217,79,61,.1);
+  color: #d94f3d;
+  border-color: rgba(217,79,61,.25);
+}
+[data-theme="light"] .btn-del:hover { background: rgba(217,79,61,.18); }
+
+[data-theme="light"] .auth-error {
+  background: rgba(217,79,61,.08);
+  border-color: rgba(217,79,61,.25);
+}
+
+[data-theme="light"] .recurrente-pendiente-item {
+  border-color: rgba(224,123,32,.25);
+}
+
+[data-theme="light"] .btn-rec-eliminar {
+  background: rgba(217,79,61,.1);
+  color: #d94f3d;
+  border-color: rgba(217,79,61,.25);
+}
+[data-theme="light"] .btn-rec-eliminar:hover { background: rgba(217,79,61,.18); }
+
+[data-theme="light"] #toggle-restar.active {
+  background: rgba(217,79,61,.1);
+  border-color: rgba(217,79,61,.3);
+  color: #d94f3d;
+}
+
+/* ── BOTÓN TEMA ───────────────────────────────────── */
+.btn-theme {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 1rem;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+.btn-theme:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}

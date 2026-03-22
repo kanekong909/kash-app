@@ -1401,6 +1401,22 @@ document.getElementById('btn-rr-guardar').addEventListener('click', async () => 
   }
 });
 
+// ── TEMA ──────────────────────────────────────────
+function aplicarTema(tema) {
+  document.documentElement.setAttribute('data-theme', tema);
+  const btn = document.getElementById('btn-theme');
+  if (btn) btn.textContent = tema === 'dark' ? '🌙' : '☀️';
+  localStorage.setItem('gd_tema', tema);
+}
+
+const temaGuardado = localStorage.getItem('gd_tema') || 'dark';
+aplicarTema(temaGuardado);
+
+document.getElementById('btn-theme').addEventListener('click', () => {
+  const actual = document.documentElement.getAttribute('data-theme');
+  aplicarTema(actual === 'dark' ? 'light' : 'dark');
+});
+
 // ── Arrancar ──────────────────────────────────────
 if (token && usuario) {
   initApp();
