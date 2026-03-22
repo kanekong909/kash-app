@@ -55,11 +55,31 @@ router.post('/login', async (req, res) => {
     if (!valid)
       return res.status(401).json({ error: 'Credenciales incorrectas' });
 
+    // Detectar sesión activa en otro dispositivo
+    const userAgent = req.headers['user-agent'] || '';
+    const esMobile = /mobile|android|iphone|ipad/i.test(userAgent);
+    const dispositivoActual = esMobile ? 'móvil' : 'computador';
+
+    let otraSesionActiva = false;
+    if (usuario.ultimo_login && usuario.ultimo_dispositivo) {
+      const diffHoras = (new Date() - new Date(usuario.ultimo_login)) / (1000 * 60 * 60);
+      if (diffHoras < 168 && usuario.ultimo_dispositivo !== dispositivoActual) {
+        otraSesionActiva = true;
+      }
+    }
+
+    // Actualizar último login
+    await pool.query(
+      'UPDATE usuarios SET ultimo_login = NOW(), ultimo_dispositivo = ? WHERE id = ?',
+      [dispositivoActual, usuario.id]
+    );
+
     const token = jwt.sign(
       { id: usuario.id, email: usuario.email, nombre: usuario.nombre },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
+
     res.json({
       token,
       usuario: {
@@ -67,7 +87,9 @@ router.post('/login', async (req, res) => {
         nombre: usuario.nombre,
         email: usuario.email,
         avatar: usuario.avatar || null
-      }
+      },
+      otraSesionActiva,
+      dispositivoActual
     });
   } catch (err) {
     console.error(err);

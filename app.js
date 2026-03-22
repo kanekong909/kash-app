@@ -86,6 +86,13 @@ document.getElementById('btn-login').addEventListener('click', async () => {
       method: 'POST', body: JSON.stringify({ email, password: pass })
     });
     saveSession(data);
+
+    // Notificar si hay otra sesión activa
+    if (data.otraSesionActiva) {
+      const otro = data.dispositivoActual === 'móvil' ? 'computador' : 'móvil';
+      sessionNotification(`Tu cuenta también está abierta en otro ${otro}.`);
+    }
+
     initApp();
   } catch (e) {
     showError('login-error', e.message);
@@ -1067,6 +1074,46 @@ function renderNavAvatar() {
   } else {
     navAvatar.innerHTML = '👤';
   }
+}
+
+// ── NOTIFICACIÓN DE SESIÓN ────────────────────────
+function sessionNotification(msg) {
+  // Eliminar si ya existe
+  const prev = document.getElementById('session-notif');
+  if (prev) prev.remove();
+
+  const notif = document.createElement('div');
+  notif.id = 'session-notif';
+  notif.style.cssText = `
+    position: fixed;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg3);
+    border: 1px solid rgba(245,166,35,.4);
+    color: var(--text);
+    border-radius: 10px;
+    padding: .65rem 1.25rem;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    z-index: 9999;
+    max-width: 340px;
+    width: calc(100% - 2rem);
+    animation: slideUp .3s ease;
+  `;
+  notif.innerHTML = `
+    <span style="font-size:1.1rem;">📱</span>
+    <span style="flex:1;">${msg}</span>
+    <button onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;padding:0;">✕</button>
+  `;
+  document.body.appendChild(notif);
+
+  // Auto-cerrar a los 6 segundos
+  setTimeout(() => notif?.remove(), 6000);
 }
 
 // ── Init app ──────────────────────────────────────
