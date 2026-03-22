@@ -629,55 +629,60 @@
 
   <!-- MODAL PERFIL -->
   <div id="perfil-modal" class="modal-overlay hidden">
-    <div class="modal-card" style="max-width:400px;">
-      <div class="modal-header">
+    <div class="modal-card" style="max-width:360px;">
+      <div class="modal-header" style="margin-bottom:1rem;">
         <h3>Mi perfil</h3>
         <button class="btn-close" id="perfil-modal-close">✕</button>
       </div>
 
       <!-- Info actual -->
-      <div class="billtera-saldo-display" style="margin-bottom:1.25rem;">
-        <span class="detail-label">Cuenta</span>
-        <span id="perfil-info-nombre" style="font-size:1.1rem;font-weight:700;color:var(--text);"></span>
-        <span id="perfil-info-email" style="font-size:12px;color:var(--text3);margin-top:2px;"></span>
+      <div style="display:flex;align-items:center;gap:.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--accent-dim);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">👤</div>
+        <div style="min-width:0;">
+          <div id="perfil-info-nombre" style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+          <div id="perfil-info-email" style="font-size:11px;color:var(--text3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+        </div>
       </div>
 
-      <div class="form-grid" style="grid-template-columns:1fr;">
-        <div class="field-group">
+      <!-- Campos -->
+      <div style="display:flex;flex-direction:column;gap:.65rem;">
+        <div class="field-group" style="margin-bottom:0;">
           <label>Nombre</label>
           <input type="text" id="perfil-nombre" placeholder="Tu nombre completo" maxlength="80"/>
         </div>
-        <div class="field-group">
-          <label>Correo electrónico</label>
+        <div class="field-group" style="margin-bottom:0;">
+          <label>Correo</label>
           <input type="email" id="perfil-email" placeholder="tucorreo@ejemplo.com"/>
         </div>
 
-        <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.25rem;">
-          <p style="font-size:12px;color:var(--text3);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.05em;font-weight:600;">Cambiar contraseña <span style="font-weight:400;">(opcional)</span></p>
-          <div class="field-group">
-            <label>Contraseña actual</label>
-            <div class="input-pass">
-              <input type="password" id="perfil-pass-actual" placeholder="Tu contraseña actual"/>
-              <button type="button" class="btn-eye" data-target="perfil-pass-actual">👁</button>
+        <div style="border-top:1px solid var(--border);padding-top:.75rem;margin-top:.1rem;">
+          <p style="font-size:10px;color:var(--text3);margin-bottom:.65rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Cambiar contraseña <span style="font-weight:400;opacity:.7;">(opcional)</span></p>
+          <div style="display:flex;flex-direction:column;gap:.65rem;">
+            <div class="field-group" style="margin-bottom:0;">
+              <label>Contraseña actual</label>
+              <div class="input-pass">
+                <input type="password" id="perfil-pass-actual" placeholder="Tu contraseña actual"/>
+                <button type="button" class="btn-eye" data-target="perfil-pass-actual">👁</button>
+              </div>
             </div>
-          </div>
-          <div class="field-group">
-            <label>Nueva contraseña</label>
-            <div class="input-pass">
-              <input type="password" id="perfil-pass-nueva" placeholder="Mínimo 6 caracteres"/>
-              <button type="button" class="btn-eye" data-target="perfil-pass-nueva">👁</button>
+            <div class="field-group" style="margin-bottom:0;">
+              <label>Nueva contraseña</label>
+              <div class="input-pass">
+                <input type="password" id="perfil-pass-nueva" placeholder="Mínimo 6 caracteres"/>
+                <button type="button" class="btn-eye" data-target="perfil-pass-nueva">👁</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div id="perfil-error" class="auth-error hidden"></div>
-      <div id="perfil-success" class="hidden" style="background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);color:#3ecf8e;border-radius:8px;padding:.65rem 1rem;font-size:13px;margin-bottom:1rem;">
-        ✓ Perfil actualizado correctamente
+      <div id="perfil-error" class="auth-error hidden" style="margin-top:.75rem;margin-bottom:0;"></div>
+      <div id="perfil-success" class="hidden" style="background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.3);color:#3ecf8e;border-radius:8px;padding:.5rem .9rem;font-size:12px;margin-top:.75rem;">
+        ✓ Perfil actualizado
       </div>
-      <div class="form-actions">
-        <button class="btn-primary" id="btn-perfil-guardar">Guardar cambios</button>
-        <button class="btn-ghost" id="btn-perfil-cancelar">Cancelar</button>
+      <div class="form-actions" style="margin-top:.9rem;gap:.65rem;">
+        <button class="btn-primary btn-sm" id="btn-perfil-guardar">Guardar</button>
+        <button class="btn-ghost btn-sm" id="btn-perfil-cancelar">Cancelar</button>
       </div>
     </div>
   </div>
