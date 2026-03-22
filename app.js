@@ -193,6 +193,7 @@ document.getElementById('btn-limpiar').addEventListener('click', () => {
   document.getElementById('f-descripcion').value = '';
   document.getElementById('f-categoria-custom').value = '';
   document.getElementById('f-categoria-custom-wrap').classList.add('hidden');
+  document.getElementById('f-billtera').value = '';  // ← agrega esta línea
   hideError('form-error');
   setDefaultDateTime();
 });
@@ -1515,6 +1516,86 @@ aplicarTema(temaGuardado);
 document.getElementById('btn-theme').addEventListener('click', () => {
   const actual = document.documentElement.getAttribute('data-theme');
   aplicarTema(actual === 'dark' ? 'light' : 'dark');
+});
+
+// ── PERFIL ────────────────────────────────────────
+function abrirPerfilModal() {
+  document.getElementById('perfil-nombre').value     = usuario.nombre;
+  document.getElementById('perfil-email').value      = usuario.email;
+  document.getElementById('perfil-pass-actual').value = '';
+  document.getElementById('perfil-pass-nueva').value  = '';
+  document.getElementById('perfil-info-nombre').textContent = usuario.nombre;
+  document.getElementById('perfil-info-email').textContent  = usuario.email;
+  document.getElementById('perfil-error').classList.add('hidden');
+  document.getElementById('perfil-success').classList.add('hidden');
+
+  // Resetear ojos
+  document.getElementById('perfil-pass-actual').type = 'password';
+  document.getElementById('perfil-pass-nueva').type  = 'password';
+
+  document.getElementById('perfil-modal').classList.remove('hidden');
+}
+
+document.getElementById('nav-nombre').addEventListener('click', abrirPerfilModal);
+
+document.getElementById('perfil-modal-close').addEventListener('click', () => {
+  document.getElementById('perfil-modal').classList.add('hidden');
+});
+document.getElementById('btn-perfil-cancelar').addEventListener('click', () => {
+  document.getElementById('perfil-modal').classList.add('hidden');
+});
+document.getElementById('perfil-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('perfil-modal'))
+    document.getElementById('perfil-modal').classList.add('hidden');
+});
+
+document.getElementById('btn-perfil-guardar').addEventListener('click', async () => {
+  const nombre         = document.getElementById('perfil-nombre').value.trim();
+  const email          = document.getElementById('perfil-email').value.trim();
+  const passActual     = document.getElementById('perfil-pass-actual').value;
+  const passNueva      = document.getElementById('perfil-pass-nueva').value;
+
+  if (!nombre || !email)
+    return showError('perfil-error', 'El nombre y el correo son obligatorios');
+
+  // Si llena solo uno de los dos campos de contraseña
+  if (passNueva && !passActual)
+    return showError('perfil-error', 'Debes ingresar tu contraseña actual para cambiarla');
+  if (passActual && !passNueva)
+    return showError('perfil-error', 'Ingresa la nueva contraseña');
+
+  try {
+    const btn = document.getElementById('btn-perfil-guardar');
+    btn.textContent = 'Guardando…';
+
+    const body = { nombre, email };
+    if (passNueva) {
+      body.password_actual = passActual;
+      body.password_nueva  = passNueva;
+    }
+
+    const res = await api('/auth/perfil', { method: 'PUT', body: JSON.stringify(body) });
+
+    // Actualizar sesión local
+    usuario.nombre = res.usuario.nombre;
+    usuario.email  = res.usuario.email;
+    localStorage.setItem('gd_usuario', JSON.stringify(usuario));
+    document.getElementById('nav-nombre').textContent = usuario.nombre.split(' ')[0];
+
+    // Limpiar contraseñas y mostrar éxito
+    document.getElementById('perfil-pass-actual').value = '';
+    document.getElementById('perfil-pass-nueva').value  = '';
+    document.getElementById('perfil-info-nombre').textContent = usuario.nombre;
+    document.getElementById('perfil-info-email').textContent  = usuario.email;
+    document.getElementById('perfil-error').classList.add('hidden');
+    document.getElementById('perfil-success').classList.remove('hidden');
+    setTimeout(() => document.getElementById('perfil-success').classList.add('hidden'), 3000);
+
+  } catch (e) {
+    showError('perfil-error', e.message);
+  } finally {
+    document.getElementById('btn-perfil-guardar').textContent = 'Guardar cambios';
+  }
 });
 
 // ── Arrancar ──────────────────────────────────────
