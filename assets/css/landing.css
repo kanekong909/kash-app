@@ -1099,3 +1099,37 @@ footer {
   .cta-title { font-size: 1.6rem; }
   .section-title { font-size: 1.5rem; }
 }
+
+/* ── MOCK WALLET FAB ── */
+.mock-wallet-fab {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.mock-wallet-tooltip {
+  background: #1c1c21;
+  border: 1px solid #2e2e35;
+  color: #9898a8;
+  font-size: 9px;
+  font-weight: 600;
+  padding: .25rem .6rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.mock-wallet-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(245,166,35,.4);
+}
