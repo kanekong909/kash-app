@@ -757,22 +757,52 @@ function generarPDF(gastos, anio, mes, password) {
   doc.setFont('helvetica', 'normal');
   doc.text(`${gastos.length} registro${gastos.length !== 1 ? 's' : ''}`, 22, 78);
 
-  // Categorías en la tarjeta — máx 3, ancho dinámico
-  const catEntries = Object.entries(porCat).slice(0, 3);
-  const colW = catEntries.length > 0 ? Math.floor(80 / catEntries.length) : 80;
-  let cx = 105;
-  catEntries.forEach(([cat, val]) => {
-    const catCorta = cat.length > 10 ? cat.slice(0, 9) + '.' : cat;
-    doc.setFontSize(7);
+  // Categorías en la tarjeta — todas, en dos filas si es necesario
+  const catEntries = Object.entries(porCat);
+  const maxPerFila = 4;
+  const fila1 = catEntries.slice(0, maxPerFila);
+  const fila2 = catEntries.slice(maxPerFila, maxPerFila * 2);
+  const alturaExtra = fila2.length > 0 ? 14 : 0;
+
+  // Redibujar tarjeta con altura ajustada
+  doc.setFillColor(28, 28, 33);
+  doc.roundedRect(14, 50, W - 28, 32 + alturaExtra, 4, 4, 'F');
+  doc.setDrawColor(...amber);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(14, 50, W - 28, 32 + alturaExtra, 4, 4, 'S');
+
+  const anchoUtil = W - 28 - 70;
+  const colW1 = Math.floor(anchoUtil / fila1.length);
+  let cx = 98;
+  fila1.forEach(([cat, val]) => {
+    const catCorta = cat.length > 9 ? cat.slice(0, 8) + '.' : cat;
+    doc.setFontSize(6.5);
     doc.setTextColor(...gray);
     doc.text(catCorta.toUpperCase(), cx, 60);
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setTextColor(...white);
     doc.setFont('helvetica', 'bold');
     doc.text(fmt(val), cx, 68);
     doc.setFont('helvetica', 'normal');
-    cx += colW;
+    cx += colW1;
   });
+
+  if (fila2.length > 0) {
+    const colW2 = Math.floor(anchoUtil / fila2.length);
+    let cx2 = 98;
+    fila2.forEach(([cat, val]) => {
+      const catCorta = cat.length > 9 ? cat.slice(0, 8) + '.' : cat;
+      doc.setFontSize(6.5);
+      doc.setTextColor(...gray);
+      doc.text(catCorta.toUpperCase(), cx2, 74);
+      doc.setFontSize(9);
+      doc.setTextColor(...white);
+      doc.setFont('helvetica', 'bold');
+      doc.text(fmt(val), cx2, 81);
+      doc.setFont('helvetica', 'normal');
+      cx2 += colW2;
+    });
+  }
 
   // ── Tabla de registros ────────────────────────────
     const CAT_COLORS_PDF = {
