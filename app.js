@@ -704,11 +704,11 @@ function generarPDF(gastos, anio, mes, password) {
   doc.setFillColor(...amber);
   doc.rect(0, 42, W, 1.5, 'F');
 
-  // Logo ◈
+  // Logo KASH
   doc.setTextColor(...amber);
   doc.setFontSize(22);
   doc.setFont('helvetica', 'bold');
-  doc.text('◈ GASTOS', 14, 20);
+  doc.text('KASH', 14, 20);
 
   // Subtítulo
   doc.setFontSize(9);
@@ -757,18 +757,21 @@ function generarPDF(gastos, anio, mes, password) {
   doc.setFont('helvetica', 'normal');
   doc.text(`${gastos.length} registro${gastos.length !== 1 ? 's' : ''}`, 22, 78);
 
-  // Categorías en la tarjeta
-  let cx = 100;
-  Object.entries(porCat).slice(0, 4).forEach(([cat, val]) => {
+  // Categorías en la tarjeta — máx 3, ancho dinámico
+  const catEntries = Object.entries(porCat).slice(0, 3);
+  const colW = catEntries.length > 0 ? Math.floor(80 / catEntries.length) : 80;
+  let cx = 105;
+  catEntries.forEach(([cat, val]) => {
+    const catCorta = cat.length > 10 ? cat.slice(0, 9) + '.' : cat;
     doc.setFontSize(7);
     doc.setTextColor(...gray);
-    doc.text(cat.toUpperCase(), cx, 60);
+    doc.text(catCorta.toUpperCase(), cx, 60);
     doc.setFontSize(10);
     doc.setTextColor(...white);
     doc.setFont('helvetica', 'bold');
     doc.text(fmt(val), cx, 68);
     doc.setFont('helvetica', 'normal');
-    cx += 28;
+    cx += colW;
   });
 
   // ── Tabla de registros ────────────────────────────
