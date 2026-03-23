@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kash — Admin</title>
+  <link rel="shortcut icon" href="./assets/img/icon.svg" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="./assets/css/admin.css">
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-wrap" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <span class="auth-logo-icon">◈</span>
+      <span class="auth-logo-text">KASH</span>
+    </div>
+    <div class="auth-badge">🔒 Admin only</div>
+    <h2>Panel de administración</h2>
+    <p>Acceso restringido. Ingresa con tu cuenta de administrador.</p>
+    <div class="field-group">
+      <label>Correo</label>
+      <input type="email" id="admin-email" placeholder="admin@correo.com"/>
+    </div>
+    <div class="field-group">
+      <label>Contraseña</label>
+      <input type="password" id="admin-pass" placeholder="••••••••"/>
+    </div>
+    <div id="admin-error" class="auth-error hidden"></div>
+    <button class="btn-primary" id="btn-admin-login">Ingresar</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="admin-app" class="hidden">
+
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span class="nav-logo-icon">◈</span>
+      <span class="nav-logo-text">KASH</span>
+    </div>
+    <span class="nav-badge">Admin</span>
+    <div class="nav-right">
+      <span class="nav-usuario" id="admin-nav-email"></span>
+      <button class="btn-refresh" id="btn-refresh">↻ Actualizar</button>
+      <button class="btn-logout-nav" id="btn-admin-logout">Salir</button>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- STATS -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="loading-row"><span class="spinner"></span></div>
+    </div>
+
+    <!-- TOP USUARIOS + ACCIONES -->
+    <div class="top-section" id="top-section">
+      <div class="panel">
+        <div class="panel-title">Top usuarios activos</div>
+        <div id="top-usuarios"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Acciones por tipo</div>
+        <div id="acciones-tipo"></div>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filtros-bar">
+      <div class="field-group">
+        <label>Usuario</label>
+        <select id="filtro-usuario">
+          <option value="">Todos los usuarios</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Acción</label>
+        <select id="filtro-accion">
+          <option value="">Todas las acciones</option>
+          <option value="CREAR">Crear</option>
+          <option value="EDITAR">Editar</option>
+          <option value="ELIMINAR">Eliminar</option>
+          <option value="RECARGAR">Recargar</option>
+          <option value="RESTAR">Restar</option>
+          <option value="LOGIN">Login</option>
+          <option value="REGISTRO">Registro</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Entidad</label>
+        <select id="filtro-entidad">
+          <option value="">Todas</option>
+          <option value="gasto">Gasto</option>
+          <option value="billtera">Billtera</option>
+          <option value="recurrente">Recurrente</option>
+          <option value="perfil">Perfil</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Desde</label>
+        <input type="date" id="filtro-desde"/>
+      </div>
+      <div class="field-group">
+        <label>Hasta</label>
+        <input type="date" id="filtro-hasta"/>
+      </div>
+      <button class="btn-filtrar" id="btn-filtrar">Filtrar</button>
+      <button class="btn-limpiar" id="btn-limpiar-filtros">Limpiar</button>
+    </div>
+
+    <!-- TABLA -->
+    <div class="tabla-wrap">
+      <div class="tabla-header-row">
+        <span>Usuario</span>
+        <span>Acción</span>
+        <span>Entidad</span>
+        <span>Detalle</span>
+        <span>IP</span>
+        <span>Fecha</span>
+      </div>
+      <div id="tabla-logs">
+        <div class="loading-row"><span class="spinner"></span> Cargando…</div>
+      </div>
+      <div class="paginacion" id="paginacion">
+        <span id="pag-info"></span>
+        <div class="pag-btns">
+          <button class="btn-pag" id="btn-prev">← Anterior</button>
+          <button class="btn-pag" id="btn-next">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="./assets/js/admin.js"></script>
+</body>
+</html>
