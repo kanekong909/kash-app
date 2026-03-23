@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express    = require('express');
 const cors       = require('cors');
-const fetch      = require('node-fetch');
 const authRoutes  = require('./routes/auth');
 const gastosRoutes = require('./routes/gastos');
 const billterasRoutes = require('./routes/billeteras');
