@@ -1314,22 +1314,26 @@ document.getElementById('billtera-modal').addEventListener('click', e => {
 document.querySelectorAll('.btn-recarga').forEach(btn => {
   btn.addEventListener('click', async () => {
     if (!billteraActiva) return;
+
     const raw = Number(btn.dataset.monto);
     const monto = modoRecarga === 'restar' ? -raw : raw;
+
     try {
       const updated = await api(`/billeteras/${billteraActiva.id}/recargar`, {
         method: 'PUT',
         body: JSON.stringify({ monto })
       });
+
       billteraActiva = updated;
+
       const idx = billeteras.findIndex(b => b.id === updated.id);
+
       if (idx !== -1) billeteras[idx] = updated;
       abrirBillteraModal(updated);
       renderFabBilleteras();
       actualizarSelectBilltera();
     } catch(e) { 
-        // document.getElementById('billtera-modal').classList.remove('hidden');
-        showError('nueva-billtera-error', e.message); 
+        showError('billtera-error', e.message || 'Saldo insuficiente');
     }
   });
 });
@@ -1351,9 +1355,11 @@ document.getElementById('btn-recarga-manual').addEventListener('click', async ()
     abrirBillteraModal(updated);
     renderFabBilleteras();
     actualizarSelectBilltera();
+    
+    // limpiar input después de éxito
+    document.getElementById('recarga-manual-input').value = '';
   } catch(e) { 
-      // document.getElementById('billtera-modal').classList.remove('hidden');
-      showError('nueva-billtera-error', e.message);
+      showError('billtera-error', e.message || 'No se pudo realizar la operación');
   }
 });
 
