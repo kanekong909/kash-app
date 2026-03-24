@@ -53,9 +53,10 @@ router.put('/:id/recargar', async (req, res) => {
       'SELECT * FROM billeteras WHERE id = ? AND usuario_id = ?', [id, uid]
     );
     if (!existing.length) return res.status(404).json({ error: 'Billtera no encontrada' });
-    
+
     const saldoActual = Number(existing[0].saldo);
     const montoNum = Number(monto);
+
     if (saldoActual + montoNum < 0) {
       return res.status(400).json({ 
         error: `Saldo insuficiente. Disponible: $${saldoActual.toLocaleString('es-CO')}` 
@@ -64,7 +65,7 @@ router.put('/:id/recargar', async (req, res) => {
 
     await pool.query(
       'UPDATE billeteras SET saldo = saldo + ? WHERE id = ?',
-      [Number(monto), id]
+      [montoNum, id]
     );
     const [rows] = await pool.query('SELECT * FROM billeteras WHERE id = ?', [id]);
     const accion = Number(monto) > 0 ? 'RECARGAR' : 'RESTAR';
