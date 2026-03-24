@@ -11,9 +11,11 @@ const app  = express();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || '*',
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization'],
+  origin: [
+    'capacitor://localhost',
+    'http://localhost',
+    'http://localhost:8100'
+  ],
   credentials: true
 };
 
