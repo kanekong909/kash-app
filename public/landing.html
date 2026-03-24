@@ -360,6 +360,21 @@
     <div class="footer-copy">© 2026 Kash. Todos los derechos reservados.</div>
   </footer>
 
+  <!-- Service Worker para soporte offline -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => {
+          console.log('✅ Service Worker registrado con éxito', reg);
+        })
+        .catch(err => {
+          console.log('❌ Error al registrar Service Worker', err);
+        });
+    });
+  }
+</script>
+
   <script src="./assets/js/landing.js"></script>
 </body>
 </html>

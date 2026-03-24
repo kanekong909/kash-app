@@ -1,5 +1,29 @@
 {
   "dependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0",
     "node-fetch": "^2.7.0"
+  },
+  "name": "gastos-backend",
+  "version": "1.0.0",
+  "description": "App web para registrar y visualizar gastos personales con autenticación por usuario.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanekong909/gastos-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kanekong909/gastos-backend/issues"
+  },
+  "homepage": "https://github.com/kanekong909/gastos-backend#readme",
+  "devDependencies": {
+    "workbox-cli": "^7.4.0"
   }
 }
