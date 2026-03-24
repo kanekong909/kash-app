@@ -1258,6 +1258,7 @@ function abrirBillteraModal(b) {
   saldoEl.textContent = fmt(b.saldo);
   saldoEl.className = 'billtera-saldo-grande' + (Number(b.saldo) < 0 ? ' negativo' : '');
   document.getElementById('recarga-manual-input').value = '';
+  document.getElementById('billtera-error').classList.add('hidden');
   document.getElementById('billtera-modal').classList.remove('hidden');
 }
 
@@ -1327,7 +1328,7 @@ document.querySelectorAll('.btn-recarga').forEach(btn => {
       renderFabBilleteras();
       actualizarSelectBilltera();
     } catch(e) { 
-        document.getElementById('billtera-modal').classList.remove('hidden');
+        // document.getElementById('billtera-modal').classList.remove('hidden');
         showError('nueva-billtera-error', e.message); 
     }
   });
@@ -1351,7 +1352,7 @@ document.getElementById('btn-recarga-manual').addEventListener('click', async ()
     renderFabBilleteras();
     actualizarSelectBilltera();
   } catch(e) { 
-      document.getElementById('billtera-modal').classList.remove('hidden');
+      // document.getElementById('billtera-modal').classList.remove('hidden');
       showError('nueva-billtera-error', e.message);
   }
 });
@@ -1367,7 +1368,7 @@ document.getElementById('btn-billtera-eliminar').addEventListener('click', () =>
       renderFabBilleteras();
       actualizarSelectBilltera();
     } catch(e) { 
-        document.getElementById('billtera-modal').classList.remove('hidden');
+        // document.getElementById('billtera-modal').classList.remove('hidden');
         showError('nueva-billtera-error', e.message);
     }
   }, `¿Eliminar ${billteraActiva.nombre}?`);
