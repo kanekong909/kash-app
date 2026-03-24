@@ -1990,6 +1990,83 @@ document.getElementById('actividad-modal').addEventListener('click', e => {
     document.getElementById('actividad-modal').classList.add('hidden');
 });
 
+// ── TRANSFERIR BILLTERA ───────────────────────────
+document.getElementById('btn-billtera-transferir').addEventListener('click', () => {
+  if (!billteraActiva) return;
+  if (billeteras.length < 2) {
+    alert('Necesitas al menos 2 billeteras para transferir');
+    return;
+  }
+
+  // Info de origen
+  document.getElementById('transferir-origen-nombre').textContent =
+    `${billteraActiva.emoji} ${billteraActiva.nombre}`;
+  document.getElementById('transferir-origen-saldo').textContent =
+    fmt(billteraActiva.saldo);
+
+  // Poblar destinos (todas menos la activa)
+  const sel = document.getElementById('transferir-destino');
+  sel.innerHTML = '<option value="">Seleccionar…</option>';
+  billeteras
+    .filter(b => b.id !== billteraActiva.id)
+    .forEach(b => sel.appendChild(new Option(`${b.emoji} ${b.nombre} — ${fmt(b.saldo)}`, b.id)));
+
+  document.getElementById('transferir-monto').value = '';
+  document.getElementById('transferir-error').classList.add('hidden');
+  document.getElementById('billtera-modal').classList.add('hidden');
+  document.getElementById('transferir-modal').classList.remove('hidden');
+});
+
+document.getElementById('transferir-modal-close').addEventListener('click', () => {
+  document.getElementById('transferir-modal').classList.add('hidden');
+});
+document.getElementById('transferir-modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('transferir-modal'))
+    document.getElementById('transferir-modal').classList.add('hidden');
+});
+
+document.getElementById('btn-transferir-confirmar').addEventListener('click', async () => {
+  const destino_id = document.getElementById('transferir-destino').value;
+  const monto = Number(document.getElementById('transferir-monto').value);
+
+  if (!destino_id) return showError('transferir-error', 'Selecciona una billtera de destino');
+  if (!monto || monto <= 0) return showError('transferir-error', 'Ingresa un monto válido');
+
+  try {
+    document.getElementById('btn-transferir-confirmar').textContent = 'Transfiriendo…';
+    const result = await api('/billeteras/transferir', {
+      method: 'POST',
+      body: JSON.stringify({
+        origen_id: billteraActiva.id,
+        destino_id: Number(destino_id),
+        monto
+      })
+    });
+
+    // Actualizar billeteras locales
+    [result.origen, result.destino].forEach(updated => {
+      const idx = billeteras.findIndex(b => b.id === updated.id);
+      if (idx !== -1) billeteras[idx] = updated;
+    });
+
+    renderFabBilleteras();
+    actualizarSelectBilltera();
+
+    document.getElementById('transferir-modal').classList.add('hidden');
+
+    // Mostrar confirmación
+    billteraActiva = result.origen;
+    abrirBillteraModal(result.origen);
+
+    // Notificación breve
+    sessionNotification(`✓ Transferencia exitosa de ${fmt(monto)}`);
+  } catch(e) {
+    showError('transferir-error', e.message);
+  } finally {
+    document.getElementById('btn-transferir-confirmar').textContent = 'Transferir';
+  }
+});
+
 // ── Arrancar ──────────────────────────────────────
 if (token && usuario) {
   initApp();

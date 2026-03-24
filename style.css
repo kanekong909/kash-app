@@ -867,7 +867,7 @@ button { cursor: pointer; font-family: var(--font-body); border: none; transitio
   border-top: 1px solid var(--border);
   padding-top: 1rem;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 .recarga-toggle {
   display: flex;

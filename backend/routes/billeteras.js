@@ -41,6 +41,7 @@ router.post('/', async (req, res) => {
   }
 });
 
+
 // PUT /api/billeteras/:id/recargar — sumar saldo
 router.put('/:id/recargar', async (req, res) => {
   const { id } = req.params;
@@ -111,6 +112,59 @@ router.delete('/:id', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error al eliminar' });
+  }
+});
+
+// POST /api/billeteras/transferir
+router.post('/transferir', async (req, res) => {
+  const { origen_id, destino_id, monto } = req.body;
+  const uid = req.usuario.id;
+
+  if (!origen_id || !destino_id || !monto || Number(monto) <= 0)
+    return res.status(400).json({ error: 'Datos incompletos o monto inválido' });
+  if (origen_id === destino_id)
+    return res.status(400).json({ error: 'No puedes transferir a la misma billtera' });
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const [origen] = await conn.query(
+      'SELECT * FROM billeteras WHERE id = ? AND usuario_id = ?', [origen_id, uid]
+    );
+    const [destino] = await conn.query(
+      'SELECT * FROM billeteras WHERE id = ? AND usuario_id = ?', [destino_id, uid]
+    );
+
+    if (!origen.length || !destino.length) {
+      await conn.rollback();
+      return res.status(404).json({ error: 'Billtera no encontrada' });
+    }
+
+    await conn.query(
+      'UPDATE billeteras SET saldo = saldo - ? WHERE id = ?',
+      [Number(monto), origen_id]
+    );
+    await conn.query(
+      'UPDATE billeteras SET saldo = saldo + ? WHERE id = ?',
+      [Number(monto), destino_id]
+    );
+
+    await conn.commit();
+
+    await logActividad(uid, 'TRANSFERIR', 'billtera',
+      `De: ${origen[0].nombre} → A: ${destino[0].nombre} | Monto: $${Number(monto).toLocaleString()}`,
+      req.ip);
+
+    const [updatedOrigen] = await pool.query('SELECT * FROM billeteras WHERE id = ?', [origen_id]);
+    const [updatedDestino] = await pool.query('SELECT * FROM billeteras WHERE id = ?', [destino_id]);
+
+    res.json({ origen: updatedOrigen[0], destino: updatedDestino[0] });
+  } catch(e) {
+    await conn.rollback();
+    res.status(500).json({ error: e.message });
+  } finally {
+    conn.release();
   }
 });
 

@@ -534,6 +534,7 @@
         </div>
       </div>
       <div class="billtera-modal-actions">
+        <button class="btn-ghost btn-sm" id="btn-billtera-transferir" style="color:var(--blue);border-color:rgba(96,165,250,.3);">⇄ Transferir</button>
         <button class="btn-ghost btn-sm" id="btn-billtera-eliminar" style="color:var(--red); border-color:rgba(248,113,113,.3);">Eliminar billtera</button>
       </div>
     </div>
@@ -765,6 +766,36 @@
       </div>
       <p style="font-size:12px;color:var(--text3);margin-bottom:1rem;">Últimos 30 días</p>
       <div id="actividad-lista" style="overflow-y:auto;flex:1;"></div>
+    </div>
+  </div>
+
+  <!-- MODAL TRANSFERIR BILLTERA -->
+  <div id="transferir-modal" class="modal-overlay hidden">
+    <div class="modal-card" style="max-width:360px;">
+      <div class="modal-header">
+        <h3>Transferir saldo</h3>
+        <button class="btn-close" id="transferir-modal-close">✕</button>
+      </div>
+      <div id="transferir-origen-info" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;margin-bottom:1.25rem;">
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem;">Desde</div>
+        <div id="transferir-origen-nombre" style="font-weight:700;font-size:14px;"></div>
+        <div id="transferir-origen-saldo" style="font-family:var(--font-head);font-size:1.2rem;font-weight:800;color:var(--accent);"></div>
+      </div>
+      <div class="field-group">
+        <label>Transferir a</label>
+        <select id="transferir-destino"></select>
+      </div>
+      <div class="field-group">
+        <label>Monto (COP)</label>
+        <div class="input-prefix">
+          <span>$</span>
+          <input type="number" id="transferir-monto" placeholder="0" min="1" step="1000"/>
+        </div>
+      </div>
+      <div id="transferir-error" class="auth-error hidden"></div>
+      <div class="form-actions">
+        <button class="btn-primary btn-full" id="btn-transferir-confirmar">Transferir</button>
+      </div>
     </div>
   </div>
 
