@@ -1355,7 +1355,7 @@ document.getElementById('btn-recarga-manual').addEventListener('click', async ()
     abrirBillteraModal(updated);
     renderFabBilleteras();
     actualizarSelectBilltera();
-    
+
     // limpiar input después de éxito
     document.getElementById('recarga-manual-input').value = '';
   } catch(e) { 
@@ -1435,23 +1435,39 @@ async function cargarRecurrentes() {
   } catch(e) { console.error(e); }
 }
 
+// ── VERIFICAR PENDIENTES (CORREGIDO) ─────────────────────────────
+
 async function verificarPendientes() {
   try {
     const pendientes = await api('/recurrentes/pendientes');
-    if (!pendientes.length) return;
 
-    // Banner
+    // Ocultar banner y lista si no hay pendientes reales
     const banner = document.getElementById('banner-recurrentes');
-    document.getElementById('banner-texto').textContent =
-      `Tienes ${pendientes.length} gasto${pendientes.length > 1 ? 's' : ''} recurrente${pendientes.length > 1 ? 's' : ''} pendiente${pendientes.length > 1 ? 's' : ''}`;
-    banner.classList.remove('hidden');
-        setTimeout(() => {
-      document.getElementById('banner-recurrentes').classList.add('hidden');
-    }, 30000);
+    const wrap = document.getElementById('recurrentes-pendientes-wrap');
 
-    // Lista en resumen
+    if (!pendientes || pendientes.length === 0) {
+      banner.classList.add('hidden');
+      wrap.classList.add('hidden');
+      return;
+    }
+
+    // Mostrar banner con conteo correcto
+    document.getElementById('banner-texto').textContent = 
+      `Tienes ${pendientes.length} gasto${pendientes.length > 1 ? 's' : ''} recurrente${pendientes.length > 1 ? 's' : ''} pendiente${pendientes.length > 1 ? 's' : ''} este mes`;
+
+    banner.classList.remove('hidden');
+
+    // Auto-ocultar después de 25 segundos (más elegante)
+    setTimeout(() => {
+      banner.classList.add('hidden');
+    }, 25000);
+
+    // Renderizar lista en la sección Resumen
     renderPendientes(pendientes);
-  } catch(e) { console.error(e); }
+
+  } catch (e) {
+    console.error('Error al verificar pendientes:', e);
+  }
 }
 
 function renderPendientes(pendientes) {
@@ -1459,20 +1475,36 @@ function renderPendientes(pendientes) {
   const lista = document.getElementById('recurrentes-pendientes-lista');
   lista.innerHTML = '';
 
-  if (!pendientes.length) { wrap.classList.add('hidden'); return; }
+  if (!pendientes.length) {
+    wrap.classList.add('hidden');
+    return;
+  }
+
   wrap.classList.remove('hidden');
 
   pendientes.forEach(r => {
     const div = document.createElement('div');
     div.className = 'recurrente-pendiente-item';
+
+    // Mejoramos el texto mostrado
+    const billteraInfo = r.billtera_nombre 
+      ? ` · ${r.billtera_emoji || ''} ${r.billtera_nombre}` 
+      : '';
+
     div.innerHTML = `
       <div class="rp-info">
         <div class="rp-nombre">${r.nombre}</div>
-        <div class="rp-detalle">Día ${r.dia_mes} · ${r.categoria}${r.billtera_nombre ? ` · ${r.billtera_emoji} ${r.billtera_nombre}` : ''}</div>
+        <div class="rp-detalle">
+          Día ${r.dia_mes} de cada mes ${billteraInfo}
+        </div>
       </div>
       <div class="rp-monto">${fmt(r.monto)}</div>
-      <button class="btn-rp-registrar">Registrar</button>`;
-    div.querySelector('.btn-rp-registrar').addEventListener('click', () => abrirRegistrarRecurrente(r));
+      <button class="btn-rp-registrar">Registrar ahora</button>`;
+
+    div.querySelector('.btn-rp-registrar').addEventListener('click', () => {
+      abrirRegistrarRecurrente(r);
+    });
+
     lista.appendChild(div);
   });
 }
