@@ -1,0 +1,13 @@
+{
+  "appId": "com.kanekong909.kash",
+  "appName": "KASH",
+  "webDir": "public",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#0d0d0f",
+      "androidScaleType": "CENTER_CROP"
+    }
+  }
+}
