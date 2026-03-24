@@ -11,11 +11,23 @@ const app  = express();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: [
-    'capacitor://localhost',
-    'http://localhost',
-    'http://localhost:8100'
-  ],
+  origin: function(origin, callback) {
+    const allowed = [
+      'https://kanekong909.github.io',
+      'capacitor://localhost',
+      'http://localhost',
+      'ionic://localhost',
+      null // para apps nativas que no envían origin
+    ];
+    // Permitir si no hay origin (APK nativa) o si está en la lista
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS no permitido'));
+    }
+  },
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
   credentials: true
 };
 
